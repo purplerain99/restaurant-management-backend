@@ -22,17 +22,24 @@ class MenuItem extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
-        'is_available' => 'boolean',
+        'price' =>
+            'decimal:2',
+
+        'is_available' =>
+            'boolean',
     ];
 
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(
+            Category::class
+        );
     }
 
     public function orderItems(): HasMany
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(
+            OrderItem::class
+        );
     }
 }

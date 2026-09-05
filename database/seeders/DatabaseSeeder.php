@@ -17,6 +17,13 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
+        User::create([
+            'name' => 'Staff',
+            'email' => 'staff@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'staff',
+        ]);
+
         $this->call([
             CategorySeeder::class,
             MenuItemSeeder::class,
