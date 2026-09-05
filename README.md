@@ -1,59 +1,702 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Restaurant Management System — Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Laravel 12 REST API backend for the Restaurant Management System.
 
-## About Laravel
+This backend provides authentication, restaurant table management, menu and category management, order processing, kitchen operations, dashboard statistics, and realtime broadcasting.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* Laravel 12
+* PHP 8.2+
+* MySQL
+* Laravel Sanctum
+* Laravel Reverb
+* Laravel Queue
+* Eloquent ORM
+* RESTful API
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Features
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Authentication
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+* Admin login
+* Staff login
+* Laravel Sanctum API authentication
+* Role-based authorization
+* Admin / Staff permissions
 
-## Agentic Development
+### Restaurant
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+* Restaurant table management
+* Unique table codes
+* QR code generation
+* Table status management
+
+### Menu
+
+* Category CRUD
+* Menu item CRUD
+* Menu image upload
+* Availability management
+* Menu filtering and search
+
+### Orders
+
+* Guest name optional
+* Guest phone optional
+* Multiple orders per table
+* Order item snapshots
+* Server-side price calculation
+* Tax calculation: 5%
+* Service charge: 10%
+* Grand total calculation
+* Order status workflow
+* Permanent order number
+* Tracking token
+
+### Kitchen
+
+* Kitchen Display System API
+* Realtime order updates
+* Realtime order status updates
+
+### Dashboard
+
+* Today's order count
+* Today's sales
+* Today's pending orders
+
+---
+
+# Requirements
+
+Install the following before running the backend:
+
+* PHP 8.2+
+* Composer
+* MySQL 8+
+* Git
+
+---
+
+# Installation
+
+## 1. Clone Repository
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/YOUR_USERNAME/restaurant-management-backend.git
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+```bash
+cd restaurant-management-backend
+```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 2. Install Dependencies
 
-## Code of Conduct
+```bash
+composer install
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## 3. Create Environment File
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Windows
 
-## License
+```bash
+copy .env.example .env
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# restaurant-management-backend
+### macOS / Linux
+
+```bash
+cp .env.example .env
+```
+
+---
+
+## 4. Generate Application Key
+
+```bash
+php artisan key:generate
+```
+
+---
+
+# Environment Configuration
+
+Create `.env`:
+
+```env
+APP_NAME="Restaurant Management API"
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+
+LOG_CHANNEL=stack
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=restaurant_management
+DB_USERNAME=root
+DB_PASSWORD=
+
+BROADCAST_CONNECTION=reverb
+
+REVERB_APP_ID=restaurant-management
+REVERB_APP_KEY=restaurant-management-key
+REVERB_APP_SECRET=restaurant-management-secret
+
+REVERB_HOST=127.0.0.1
+REVERB_PORT=8080
+
+REVERB_SCHEME=http
+
+QUEUE_CONNECTION=database
+
+FILESYSTEM_DISK=public
+```
+
+Update the MySQL credentials according to your local environment.
+
+---
+
+# Database
+
+Create a MySQL database:
+
+```sql
+CREATE DATABASE restaurant_management
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+```
+
+---
+
+# Migration
+
+Run database migrations:
+
+```bash
+php artisan migrate
+```
+
+Reset and rebuild the database:
+
+```bash
+php artisan migrate:fresh
+```
+
+---
+
+# Seeder
+
+Run seeders:
+
+```bash
+php artisan db:seed
+```
+
+Or:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+---
+
+# Demo Credentials
+
+The default demo administrator:
+
+```text
+Email: admin@gmail.com
+Password: password
+Role: admin
+```
+
+> Change the demo password before using the system in production.
+
+---
+
+# Storage
+
+Create the public storage link:
+
+```bash
+php artisan storage:link
+```
+
+Menu images are stored in:
+
+```text
+storage/app/public/menu-items
+```
+
+---
+
+# QR Code
+
+QR code package:
+
+```bash
+composer require f9webltd/simple-qrcode
+```
+
+Generate the public storage link before testing QR functionality:
+
+```bash
+php artisan storage:link
+```
+
+Sample table code:
+
+```text
+TBL_DEMO01
+```
+
+Sample customer URL:
+
+```text
+http://localhost:5173/t/TBL_DEMO01
+```
+
+The sample table must exist in the database.
+
+---
+
+# API Base URL
+
+```text
+http://localhost:8000/api/v1
+```
+
+---
+
+# API Endpoints
+
+## Authentication
+
+```text
+POST /api/v1/auth/login
+GET  /api/v1/auth/me
+POST /api/v1/auth/logout
+```
+
+---
+
+## Public Customer API
+
+```text
+GET  /api/v1/public/categories
+GET  /api/v1/public/menu-items
+GET  /api/v1/public/tables/{table_code}
+
+POST /api/v1/public/orders
+GET  /api/v1/public/orders/{order_number}
+GET  /api/v1/public/orders/track/{tracking_token}
+```
+
+---
+
+## Orders
+
+```text
+GET   /api/v1/orders
+GET   /api/v1/orders/{order}
+PATCH /api/v1/orders/{order}/status
+```
+
+---
+
+## Menu
+
+```text
+GET    /api/v1/menu-items
+POST   /api/v1/menu-items
+GET    /api/v1/menu-items/{menu_item}
+PUT    /api/v1/menu-items/{menu_item}
+DELETE /api/v1/menu-items/{menu_item}
+```
+
+---
+
+## Categories
+
+```text
+GET    /api/v1/categories
+POST   /api/v1/categories
+GET    /api/v1/categories/{category}
+PUT    /api/v1/categories/{category}
+DELETE /api/v1/categories/{category}
+```
+
+---
+
+## Tables
+
+```text
+GET    /api/v1/tables
+POST   /api/v1/tables
+GET    /api/v1/tables/{table}
+PUT    /api/v1/tables/{table}
+DELETE /api/v1/tables/{table}
+GET    /api/v1/tables/{restaurant_table}/qr
+```
+
+---
+
+## Dashboard
+
+```text
+GET /api/v1/dashboard
+```
+
+---
+
+# Authentication
+
+Laravel Sanctum is used for API authentication.
+
+Authenticated requests must include:
+
+```http
+Authorization: Bearer TOKEN
+Accept: application/json
+```
+
+---
+
+# Roles
+
+## Admin
+
+Admin can manage:
+
+* Dashboard
+* Orders
+* Kitchen
+* Categories
+* Menu
+* Tables
+* QR Codes
+
+## Staff
+
+Staff can manage:
+
+* Orders
+* Kitchen
+
+Staff can view menu/category data but cannot modify menu or restaurant settings.
+
+---
+
+# Order Calculation
+
+Order prices are always calculated on the backend.
+
+Frontend-submitted prices are not trusted.
+
+```text
+Subtotal
+    +
+Tax (5%)
+    +
+Service Charge (10%)
+    =
+Grand Total
+```
+
+Example:
+
+```text
+Subtotal                20,000 MMK
+Tax (5%)                 1,000 MMK
+Service Charge (10%)     2,000 MMK
+-----------------------------------
+Grand Total             23,000 MMK
+```
+
+---
+
+# Order Status
+
+```text
+pending
+   ↓
+confirmed
+   ↓
+preparing
+   ↓
+ready
+   ↓
+served
+   ↓
+completed
+```
+
+Cancellation is allowed from the appropriate active states.
+
+Final states:
+
+```text
+completed
+cancelled
+```
+
+---
+
+# Realtime Broadcasting
+
+Realtime uses:
+
+* Laravel Reverb
+* Laravel Echo
+* Pusher protocol
+* Laravel Queue
+
+Channels:
+
+```text
+private-restaurant.orders
+private-kitchen.orders
+orders.{tracking_token}
+```
+
+Events:
+
+```text
+order.created
+order.status.updated
+```
+
+---
+
+# Running the Backend
+
+Use three terminal windows.
+
+### Laravel
+
+```bash
+php artisan serve
+```
+
+### Queue Worker
+
+```bash
+php artisan queue:work
+```
+
+### Reverb
+
+```bash
+php artisan reverb:start
+```
+
+Backend:
+
+```text
+http://localhost:8000
+```
+
+Reverb:
+
+```text
+ws://localhost:8080
+```
+
+---
+
+# Clear Cache
+
+After changing `.env`:
+
+```bash
+php artisan optimize:clear
+```
+
+---
+
+# Database Schema
+
+```mermaid
+erDiagram
+
+    USERS {
+        bigint id PK
+        string name
+        string email
+        string password
+        enum role
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    RESTAURANT_TABLES {
+        bigint id PK
+        string name
+        string table_code UK
+        int capacity
+        enum status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CATEGORIES {
+        bigint id PK
+        string name
+        string slug UK
+        boolean is_active
+        timestamp created_at
+        timestamp updated_at
+        timestamp deleted_at
+    }
+
+    MENU_ITEMS {
+        bigint id PK
+        bigint category_id FK
+        string name
+        string slug
+        text description
+        string image
+        decimal price
+        boolean is_available
+        timestamp created_at
+        timestamp updated_at
+        timestamp deleted_at
+    }
+
+    ORDERS {
+        bigint id PK
+        string order_number UK
+        string tracking_token UK
+        bigint restaurant_table_id FK
+        string guest_name
+        string guest_phone
+        enum status
+        decimal subtotal
+        decimal tax_amount
+        decimal service_charge
+        decimal grand_total
+        text note
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    ORDER_ITEMS {
+        bigint id PK
+        bigint order_id FK
+        bigint menu_item_id FK
+        string menu_item_name
+        int quantity
+        decimal unit_price
+        decimal subtotal
+        text special_note
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    CATEGORIES ||--o{ MENU_ITEMS : contains
+    RESTAURANT_TABLES ||--o{ ORDERS : has
+    ORDERS ||--o{ ORDER_ITEMS : contains
+    MENU_ITEMS ||--o{ ORDER_ITEMS : references
+```
+
+---
+
+# Architecture Decisions
+
+## REST API
+
+The backend is implemented as a REST API under:
+
+```text
+/api/v1
+```
+
+The frontend is completely separated from Laravel.
+
+---
+
+## SPA Architecture
+
+The backend does not render the main application UI.
+
+Vue 3 handles:
+
+* Admin UI
+* Customer UI
+* Navigation
+* Cart state
+* Realtime UI
+* Form interaction
+
+Laravel handles:
+
+* Authentication
+* Authorization
+* Business logic
+* Database
+* Order calculation
+* File storage
+* Realtime broadcasting
+
+---
+
+## Why REST API?
+
+A separate REST API allows the backend to be reused later by:
+
+* Mobile applications
+* POS applications
+* Other web clients
+* Third-party integrations
+
+---
+
+## Order Item Snapshot
+
+The `order_items` table stores:
+
+```text
+menu_item_name
+unit_price
+subtotal
+```
+
+This preserves historical order information even when the menu item is edited or deleted.
+
+---
+
+# Development Commands
+
+```bash
+composer install
+php artisan key:generate
+php artisan migrate --seed
+php artisan storage:link
+php artisan optimize:clear
+php artisan serve
+php artisan queue:work
+php artisan reverb:start
+```
+
+---
+
+# License
+
+For educational and Junior Interview.
