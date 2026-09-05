@@ -87,77 +87,127 @@ class OrderController extends Controller
         ]);
     }
 
-    public function index(
-        Request $request
-    ): JsonResponse {
+
+    public function index(Request $request)
+    {
+        $perPage = min(
+            max($request->integer('per_page', 15), 1),
+            100
+        );
 
         $query = Order::query()
             ->with([
-                'restaurantTable',
-                'orderItems',
-            ]);
+                'restaurantTable:id,name,table_code',
+                'orderItems:id,order_id,menu_item_id,menu_item_name,quantity,unit_price,subtotal,special_note',
+            ])
+            ->latest('created_at');
 
-
-
-        if (
-            $request->boolean('kitchen')
-        ) {
-            $query->whereIn(
-                'status',
-                [
-                    'pending',
-                    'confirmed',
-                    'preparing',
-                    'ready',
-                ]
-            );
-        }
-
+        /*
+    |--------------------------------------------------------------------------
+    | Status
+    |--------------------------------------------------------------------------
+    */
         if ($request->filled('status')) {
             $query->where(
                 'status',
-                $request->string('status')
+                $request->string('status')->toString()
             );
         }
 
+        /*
+    |--------------------------------------------------------------------------
+    | Search
+    |--------------------------------------------------------------------------
+    */
         if ($request->filled('search')) {
+            $search = $request->string('search')->toString();
 
-            $search =
-                $request->string('search');
-
-            $query->where(function ($q)
-            use ($search) {
+            $query->where(function ($q) use ($search) {
 
                 $q->where(
                     'order_number',
                     'like',
                     "%{$search}%"
-                );
+                )
 
-                $q->orWhereHas(
-                    'restaurantTable',
-                    function ($tableQuery)
-                    use ($search) {
+                    ->orWhere(
+                        'guest_name',
+                        'like',
+                        "%{$search}%"
+                    )
 
-                        $tableQuery->where(
-                            'name',
-                            'like',
-                            "%{$search}%"
-                        );
-                    }
-                );
+                    ->orWhere(
+                        'guest_phone',
+                        'like',
+                        "%{$search}%"
+                    )
+
+                    ->orWhereHas(
+                        'restaurantTable',
+                        function ($tableQuery) use ($search) {
+                            $tableQuery->where(
+                                'name',
+                                'like',
+                                "%{$search}%"
+                            );
+                        }
+                    );
             });
         }
 
-        $orders = $query
-            ->latest('id')
-            ->paginate(20);
+        /*
+    |--------------------------------------------------------------------------
+    | From Date
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('date_from')) {
+            $query->whereDate(
+                'created_at',
+                '>=',
+                $request->date_from
+            );
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | To Date
+    |--------------------------------------------------------------------------
+    */
+        if ($request->filled('date_to')) {
+            $query->whereDate(
+                'created_at',
+                '<=',
+                $request->date_to
+            );
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Pagination
+    |--------------------------------------------------------------------------
+    */
+        $orders = $query->paginate($perPage);
 
         return response()->json([
             'success' => true,
-            'data' => $orders,
+
+            'data' => [
+                'items' => OrderResource::collection(
+                    $orders->items()
+                ),
+
+                'pagination' => [
+                    'current_page' => $orders->currentPage(),
+                    'last_page' => $orders->lastPage(),
+                    'per_page' => $orders->perPage(),
+                    'total' => $orders->total(),
+                    'from' => $orders->firstItem(),
+                    'to' => $orders->lastItem(),
+                ],
+            ],
         ]);
     }
+
 
     public function updateStatus(
         UpdateOrderStatusRequest $request,
@@ -341,4 +391,29 @@ class OrderController extends Controller
             ],
         ]);
     }
+
+
+    // Kitchen Order
+    public function kitchenOrders()
+{
+    $orders = Order::with([
+        'restaurantTable',
+        'orderItems',
+    ])
+    ->whereIn('status', [
+        'pending',
+        'confirmed',
+        'preparing',
+        'ready',
+    ])
+    ->latest()
+    ->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => [
+            'items' => $orders,
+        ],
+    ]);
+}
 }

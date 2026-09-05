@@ -127,8 +127,9 @@ class RestaurantTableController extends Controller
      */
     public function destroy(
         RestaurantTable $restaurantTable
+        , int $id
     ): JsonResponse {
-
+        $restaurantTable = RestaurantTable::findOrFail($id);
         /*
          * Order ရှိပြီးသား table ကို
          * မဖျက်စေချင်ရင် production မှာ
@@ -148,7 +149,7 @@ class RestaurantTableController extends Controller
      * Generate QR Code
      */
     public function qr(
-        RestaurantTable $restaurantTable
+        RestaurantTable $restaurantTable,
     ) {
         $url = config(
             'app.frontend_url',

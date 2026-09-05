@@ -156,7 +156,7 @@ Route::prefix('v1')->group(function () {
         */
         Route::get('/kitchen/orders', [
             OrderController::class,
-            'kitchen',
+            'kitchenOrders',
         ]);
 
         /*
